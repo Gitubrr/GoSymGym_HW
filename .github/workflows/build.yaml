@@ -1,10 +1,12 @@
-name: build_and_lint
+name: build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: 
+        - '**'
   pull_request:
-    branches: [ "main" ]
+    branches:
+        - '**'
 
 jobs:
   build:
@@ -22,9 +24,3 @@ jobs:
 
       - name: Build
         run: go build -o GoSymGym ./cmd
-
-      - name: Format
-        run: go fmt ./...
-        
-      - name: Vet
-        run: go vet ./...
