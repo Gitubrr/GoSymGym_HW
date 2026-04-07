@@ -9,6 +9,7 @@ import (
 
 	pb "github.com/Gitubrr/GoSymGym/api/collector"
 	"github.com/Gitubrr/GoSymGym/collector/internal/usecase"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Handler struct {
@@ -50,6 +51,6 @@ func (h *Handler) GetRepository(ctx context.Context, req *pb.RepoRequest) (*pb.R
 		Description: repoData.Description,
 		Stars:       int32(repoData.Stars),
 		Forks:       int32(repoData.Forks),
-		CreatedAt:   repoData.CreatedAt.String(),
+		CreatedAt:   timestamppb.New(repoData.CreatedAt).String(),
 	}, nil
 }

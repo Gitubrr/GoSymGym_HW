@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -37,8 +38,11 @@ func (c *GitHubClient) GetRepository(ctx context.Context, owner, repo string) (*
 
 	url := fmt.Sprintf("%s/repos/%s/%s", c.baseURL, owner, repo)
 
+	log.Printf("Requesting GitHub API: %s", url) // ← добавить
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
+		log.Printf("Error creating request: %v", err) // ← добавить
 		return nil, fmt.Errorf("creating request: %w", err)
 	}
 
@@ -47,13 +51,19 @@ func (c *GitHubClient) GetRepository(ctx context.Context, owner, repo string) (*
 
 	if c.token != "" {
 		req.Header.Set("Authorization", "Bearer "+c.token)
+		log.Printf("Using GitHub token") // ← добавить
 	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
+		log.Printf("HTTP request failed: %v", err) // ← добавить
 		return nil, fmt.Errorf("executing request: %w", err)
 	}
 	defer resp.Body.Close()
+
+	log.Printf("GitHub API response status: %d", resp.StatusCode) // ← добавить
+
+	// ... остальной код
 
 	switch resp.StatusCode {
 	case http.StatusOK:

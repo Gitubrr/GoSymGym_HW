@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package collector;
 option go_package = "github.com/Gitubrr/GoSymGym/api/collector";
-
+import "google/protobuf/timestamp.proto"; 
 service CollectorService {
     rpc GetRepository(RepoRequest) returns (RepoResponse);
 }
@@ -18,5 +18,5 @@ message RepoResponse {
     string description = 3;
     int32 stars = 4;
     int32 forks = 5;
-    string created_at = 6;
+    google.protobuf.Timestamp created_at = 6;;
 }

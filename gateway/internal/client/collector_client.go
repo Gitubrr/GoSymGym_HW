@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"google.golang.org/grpc"
@@ -19,11 +20,13 @@ type collectorClient struct {
 }
 
 func NewCollectorClient(addr string) (*collectorClient, error) {
+	log.Printf("Connecting to collector at %s", addr)
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {
+		log.Printf("Failed to connect: %v", err)
 		return nil, fmt.Errorf("failed to connect to collector: %w", err)
 	}
-
+	log.Printf("Connected successfully")
 	return &collectorClient{
 		client: pb.NewCollectorServiceClient(conn),
 		conn:   conn,
@@ -41,13 +44,16 @@ func parseTime(timeStr string) (time.Time, error) {
 }
 
 func (c *collectorClient) GetRepository(ctx context.Context, owner, repo string) (*domain.Repository, error) {
+	log.Printf("Calling GetRepository with owner=%s, repo=%s", owner, repo)
 	req := &pb.RepoRequest{
 		Owner: owner,
 		Repo:  repo,
 	}
-
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	resp, err := c.client.GetRepository(ctx, req)
 	if err != nil {
+		log.Printf("gRPC call failed: %v", err)
 		if status.Code(err) == codes.NotFound {
 			return nil, ErrNotFound
 		}
@@ -55,8 +61,10 @@ func (c *collectorClient) GetRepository(ctx context.Context, owner, repo string)
 	}
 
 	// Парсим время
-	createdAt, err := parseTime(resp.CreatedAt)
+	log.Printf("gRPC call succeeded, response: %+v", resp)
+	createdAt := resp.CreatedAt.AsTime()
 	if err != nil {
+		log.Printf("Failed to parse time: %v", err)
 		return nil, fmt.Errorf("failed to parse created_at: %w", err)
 	}
 

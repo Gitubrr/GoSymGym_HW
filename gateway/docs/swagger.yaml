@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  title: GitHub Repository API
+  description: |
+    API для получения информации о репозиториях GitHub.
+    
+    ## Возможности
+    * Получение информации о репозитории по имени владельца и названию
+    * Возвращает данные в формате JSON
+    * Поддержка авторизации через GitHub токен
+    
+    ## Использование
+    Просто отправьте GET запрос с указанием владельца и названия репозитория.
+  version: 1.0.0
+  contact:
+    name: Support
+    email: support@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: http://localhost:8080/api/v1
+    description: API v1 base path
+
+tags:
+  - name: repositories
+    description: Операции с репозиториями
+
+paths:
+  /api/v1/repos/{owner}/{repo}:
+    get:
+      tags:
+        - repositories
+      summary: Получить информацию о репозитории
+      description: |
+        Возвращает подробную информацию о репозитории GitHub:
+        * Имя репозитория
+        * Полное имя (владелец/репозиторий)
+        * Описание
+        * Количество звезд
+        * Количество форков
+        * Дата создания
+      operationId: getRepository
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          description: Владелец репозитория (username или организация)
+          schema:
+            type: string
+          example: golang
+        - name: repo
+          in: path
+          required: true
+          description: Название репозитория
+          schema:
+            type: string
+          example: go
+      responses:
+        '200':
+          description: Успешный ответ. Возвращает информацию о репозитории.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repository'
+              examples:
+                golang_go:
+                  summary: Пример для golang/go
+                  value:
+                    name: "go"
+                    full_name: "golang/go"
+                    description: "The Go programming language"
+                    stars: 123456
+                    forks: 56789
+                    created_at: "2014-08-19T04:33:40Z"
+                kubernetes_kubernetes:
+                  summary: Пример для kubernetes/kubernetes
+                  value:
+                    name: "kubernetes"
+                    full_name: "kubernetes/kubernetes"
+                    description: "Production-Grade Container Scheduling and Management"
+                    stars: 110000
+                    forks: 39000
+                    created_at: "2014-06-06T20:46:19Z"
+        '400':
+          description: Неверный запрос (отсутствуют обязательные параметры)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missing_owner:
+                  value:
+                    error: "invalid input: owner is required"
+                missing_repo:
+                  value:
+                    error: "invalid input: repo is required"
+        '404':
+          description: Репозиторий не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                not_found:
+                  value:
+                    error: "repository not found"
+        '429':
+          description: Превышен лимит запросов к GitHub API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                rate_limit:
+                  value:
+                    error: "rate limit exceeded, please try again later"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                internal_error:
+                  value:
+                    error: "internal server error"
+        '503':
+          description: Сервис недоступен (Collector не отвечает)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unavailable:
+                  error: "collector service unavailable"
+
+components:
+  schemas:
+    Repository:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название репозитория
+          example: "go"
+        full_name:
+          type: string
+          description: Полное имя репозитория (владелец/название)
+          example: "golang/go"
+        description:
+          type: string
+          description: Описание репозитория
+          example: "The Go programming language"
+        stars:
+          type: integer
+          description: Количество звезд (лайков)
+          example: 123456
+          minimum: 0
+        forks:
+          type: integer
+          description: Количество форков (копий)
+          example: 56789
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+          description: Дата создания репозитория в формате RFC3339
+          example: "2014-08-19T04:33:40Z"
+      required:
+        - name
+        - full_name
+        - stars
+        - forks
+        - created_at
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Сообщение об ошибке
+          example: "repository not found"
+      required:
+        - error
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: GitHub Personal Access Token (опционально)
+
+security:
+  - BearerAuth: []
+
+# Дополнительная информация
+x-tags:
+  - name: repositories
+    description: Endpoints для работы с репозиториями
+
+x-version-info:
+  current: 1.0.0
+  latest: 1.0.0
+  deprecated: false

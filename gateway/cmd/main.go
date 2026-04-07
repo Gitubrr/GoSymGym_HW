@@ -23,7 +23,7 @@ func loadConfig() config {
 
 	collectorAddr := os.Getenv("COLLECTOR_ADDR")
 	if collectorAddr == "" {
-		collectorAddr = "localhost:50051"
+		collectorAddr = "127.0.0.1:50051"
 	}
 
 	return config{

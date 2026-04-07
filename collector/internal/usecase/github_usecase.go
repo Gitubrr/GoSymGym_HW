@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/Gitubrr/GoSymGym/collector/internal/domain"
 	"github.com/Gitubrr/GoSymGym/collector/internal/repository"
@@ -27,6 +28,7 @@ func NewGitHubUseCase(githubRepo repository.GitHubRepository) *GitHubUseCase {
 }
 
 func (uc *GitHubUseCase) GetRepository(ctx context.Context, owner, repo string) (*domain.Repository, error) {
+	log.Printf("GetRepository called with owner=%s, repo=%s", owner, repo)
 
 	if owner == "" {
 		return nil, fmt.Errorf("%w: owner is required", ErrInvalidInput)
@@ -37,6 +39,7 @@ func (uc *GitHubUseCase) GetRepository(ctx context.Context, owner, repo string) 
 
 	repoData, err := uc.githubRepo.GetRepository(ctx, owner, repo)
 	if err != nil {
+		log.Printf("Repository error: %v", err)
 
 		switch {
 		case errors.Is(err, repository.ErrNotFound):
