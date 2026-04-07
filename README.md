@@ -5,8 +5,6 @@
 ![Go linting and formatting](https://img.shields.io/github/actions/workflow/status/Gitubrr/GoSymGym/build_and_lint.yaml?label=lint&job=lint)
 ![Build](https://img.shields.io/github/actions/workflow/status/Gitubrr/GoSymGym/build_and_lint.yaml?label=build&job=build)
 
-This is homework for the Go course.
-
 **GoSymGym** is a CLI tool for getting information about GitHub repositories directly from the terminal. It displays stars, forks, issue count, language, creation and update dates, and a link to the repository.
 
 ---
