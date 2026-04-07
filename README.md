@@ -2,8 +2,8 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?logo=go)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Go linting and formatting](https://img.shields.io/github/actions/workflow/status/Gitubrr/GoSymGym/build_and_lint.yaml?label=lint&job=lint)](https://github.com/Gitubrr/GoSymGym_HW/actions/workflows/lint_and_format.yaml)
-[![Build](https://img.shields.io/github/actions/workflow/status/Gitubrr/GoSymGym/build_and_lint.yaml?label=build&job=build)](https://github.com/Gitubrr/GoSymGym_HW/actions/workflows/build.yaml)
+[![Go linting and formatting](https://img.shields.io/github/actions/workflow/status/Gitubrr/GoSymGym_HW/lint_and_format.yaml?label=lint)](https://github.com/Gitubrr/GoSymGym_HW/actions/workflows/lint_and_format.yaml)
+[![Build](https://img.shields.io/github/actions/workflow/status/Gitubrr/GoSymGym_HW/build.yaml?label=build)](https://github.com/Gitubrr/GoSymGym_HW/actions/workflows/build.yaml)
 
 **GoSymGym** is a CLI tool for getting information about GitHub repositories directly from the terminal. It displays stars, forks, issue count, language, creation and update dates, and a link to the repository.
 
